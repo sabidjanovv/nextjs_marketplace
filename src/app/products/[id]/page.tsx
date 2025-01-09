@@ -1,13 +1,27 @@
 import React from "react";
 import { IProduct } from "../../../types";
 
-const Detail = async ({ params }: { params: { id: string } }) => {
-  const id = params.id;
+interface DetailProps {
+  params: {
+    id: string;
+  };
+}
+
+const Detail = async ({ params }: DetailProps) => {
+  const { id } = params;
 
   // Fetch the product data
-  const res = await fetch(`https://dummyjson.com/products/${id}`);
+  const res = await fetch(`https://dummyjson.com/products/${id}`, {
+    cache: "no-store", // Ensures the fetch is not cached during ISR
+  });
   if (!res.ok) {
-    throw new Error(`Failed to fetch product with id: ${id}`);
+    return (
+      <div className="container mx-auto py-8 px-4 lg:px-16">
+        <h1 className="text-2xl text-red-500">
+          Failed to fetch product with ID: {id}
+        </h1>
+      </div>
+    );
   }
   const product: IProduct = await res.json();
 
@@ -66,58 +80,6 @@ const Detail = async ({ params }: { params: { id: string } }) => {
             </span>
             <span className="text-gray-500">({product.rating.toFixed(1)})</span>
           </div>
-
-          <div className="flex flex-col gap-2">
-            <h3 className="text-lg font-semibold text-gray-800">
-              Key Features
-            </h3>
-            <ul className="list-disc list-inside text-gray-600">
-              <li>Brand: {product.brand}</li>
-              <li>
-                Stock: {product.stock > 0 ? product.stock : "Out of Stock"}
-              </li>
-              {product.weight && <li>Weight: {product.weight} kg</li>}
-              {product.dimensions && (
-                <li>
-                  Dimensions: {product.dimensions.width}x
-                  {product.dimensions.height}x{product.dimensions.depth} cm
-                </li>
-              )}
-            </ul>
-          </div>
-
-          <button className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow hover:bg-blue-700 transition">
-            Add to Cart
-          </button>
-        </div>
-      </div>
-
-      {/* Reviews Section */}
-      <div className="mt-12">
-        <h2 className="text-2xl font-semibold text-gray-800">Reviews</h2>
-        <div className="mt-4 space-y-4">
-          {product.reviews && product.reviews.length > 0 ? (
-            product.reviews.map((review, index) => (
-              <div key={index} className="border rounded-lg p-4 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-medium text-gray-800">
-                    {review.reviewerName || "Anonymous"}
-                  </h3>
-                  <span className="text-yellow-500">
-                    {Array.from({ length: review.rating }).map((_, i) => (
-                      <span key={i}>&#9733;</span>
-                    ))}
-                  </span>
-                </div>
-                <p className="text-gray-500 mt-2">{review.comment}</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  {new Date(review.date).toLocaleDateString()}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-500">No reviews yet.</p>
-          )}
         </div>
       </div>
     </div>
