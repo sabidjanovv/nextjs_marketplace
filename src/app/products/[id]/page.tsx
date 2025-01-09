@@ -1,6 +1,6 @@
 import React from "react";
 import { IProduct } from "../../../types";
-import logo from "@/app/images/logo1-removebg-preview.png";
+
 const Detail = async ({ params }: { params: { id: string } }) => {
   const id = params.id;
 
@@ -20,17 +20,16 @@ const Detail = async ({ params }: { params: { id: string } }) => {
             <img
               src={product.thumbnail}
               alt={product.title}
-              className="w-auto h-[100%]"
+              className="w-auto h-[100%] rounded-lg"
             />
           </div>
           <div className="grid grid-cols-4 gap-2">
             {product.images.map((image, index) => (
               <img
-                // onClick={}
                 key={index}
                 src={image}
                 alt={`${product.title} - ${index + 1}`}
-                className="w-full h-36 object-cover  border border-slate-300 rounded-md cursor-pointer hover:opacity-80 hover:border-blue-500 transition-opacity"
+                className="w-full h-36 object-cover border border-slate-300 rounded-md cursor-pointer hover:opacity-80 hover:border-blue-500 transition-opacity"
               />
             ))}
           </div>
@@ -74,12 +73,16 @@ const Detail = async ({ params }: { params: { id: string } }) => {
             </h3>
             <ul className="list-disc list-inside text-gray-600">
               <li>Brand: {product.brand}</li>
-              <li>Stock: {product.stock}</li>
-              <li>Weight: {product.weight} kg</li>
               <li>
-                Dimensions: {product.dimensions.width}x
-                {product.dimensions.height}x{product.dimensions.depth} cm
+                Stock: {product.stock > 0 ? product.stock : "Out of Stock"}
               </li>
+              {product.weight && <li>Weight: {product.weight} kg</li>}
+              {product.dimensions && (
+                <li>
+                  Dimensions: {product.dimensions.width}x
+                  {product.dimensions.height}x{product.dimensions.depth} cm
+                </li>
+              )}
             </ul>
           </div>
 
@@ -98,7 +101,7 @@ const Detail = async ({ params }: { params: { id: string } }) => {
               <div key={index} className="border rounded-lg p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium text-gray-800">
-                    {review.reviewerName}
+                    {review.reviewerName || "Anonymous"}
                   </h3>
                   <span className="text-yellow-500">
                     {Array.from({ length: review.rating }).map((_, i) => (
